@@ -36,6 +36,106 @@ Our mission is to develop market-ready applications that demonstrate real-world 
 - **Monitoring**: Sentry, LogRocket, or New Relic
 - **Communication**: Slack, Discord, or Microsoft Teams
 
+## 🗄️ Database Schema
+
+### ✅ 1. MongoDB (Database) Schema
+
+This is the technical structure that defines the shape and types of your documents in the qs_rankings.egypt collection.
+
+#### 📦 Collection: egypt
+
+#### 🧱 Schema (in Mongoose-style JSON):
+
+```json
+{
+  _id: "ObjectId",
+  Index: "Number",
+  "2026 Rank": "Number",
+  "2025 Rank": "Number",
+  Name: "String",
+  Country: "String",
+  Region: "String",
+  Size: "String",
+  Focus: "String",
+  Research: "String",
+  Status: "String",
+  "AR SCORE": "Number",
+  "AR RANK": "Mixed",   // Could be Number or String like "801+"
+  "ER SCORE": "Number",
+  "ER RANK": "Mixed",
+  "FSR SCORE": "Number",
+  "FSR RANK": "Mixed",
+  "CPF SCORE": "Number",
+  "CPF RANK": "Mixed",
+  "IFR SCORE": "Number",
+  "IFR RANK": "Mixed",
+  "ISR SCORE": "Number",
+  "ISR RANK": "Mixed",
+  "ISD SCORE": "Number",
+  "ISD RANK": "Mixed",
+  "IRN SCORE": "Number",
+  "IRN RANK": "Mixed",
+  "EO SCORE": "Number",
+  "EO RANK": "Mixed",
+  "SUS SCORE": "Number",
+  "SUS RANK": "Mixed",
+  "Overall SCORE": "Number"
+}
+```
+
+**Note:** Mixed means the value may be a Number or a String like "801+" or "669=".
+
+### 🧑‍🏫 2. Human-Readable Schema (Explanation Table)
+
+#### Basic Information
+| Field | Meaning | Example Value |
+|-------|---------|---------------|
+| Index | Row index from the original dataset | 381 |
+| 2026 Rank | QS global rank in 2026 | 381 |
+| 2025 Rank | QS global rank in 2025 | 410 |
+| Name | University name | The American University in Cairo |
+| Country | Country | Egypt |
+| Region | Geographical region | Africa |
+| Size | University size (e.g., S, M, L) | M |
+| Focus | University academic focus type (e.g., CO = Comprehensive) | CO |
+| Research | Research output level (e.g., VH = Very High) | VH |
+| Status | Ownership (e.g., Public, Private, Not for Profit) | Private not for Profit |
+
+#### 📊 Performance Metrics
+| Code | Description | Example Score | Example Rank |
+|------|-------------|---------------|--------------|
+| AR | Academic Reputation | 40.8 | 292 |
+| ER | Employer Reputation | 46.9 | 278 |
+| FSR | Faculty/Student Ratio | 39 | 521 |
+| CPF | Citations per Faculty | 12.2 | 801+ |
+| IFR | International Faculty Ratio | 98 | 141 |
+| ISR | International Student Ratio | 7.1 | 801+ |
+| ISD | International Research Diversity | 11.7 | 801+ |
+| IRN | International Research Network | 46.8 | 801+ |
+| EO | Employment Outcomes | 88.6 | 118 |
+| SUS | Sustainability | 51.6 | 669= |
+| Overall SCORE | Final composite score | 39.4 | — |
+
+### 📥 Data Import Instructions
+
+To load the data from `qs_cleaned.csv` into MongoDB, use the following command:
+
+```bash
+mongoimport --uri="mongodb://localhost:27017" \
+  --db=qs_rankings \
+  --collection=egypt \
+  --type=csv \
+  --headerline \
+  --file="full_path_to/software_training/qs_cleaned.csv"
+```
+
+**Prerequisites:**
+- MongoDB server running on localhost:27017
+- `mongoimport` tool installed (comes with MongoDB)
+- `qs_cleaned.csv` file in the specified path
+
+**Note:** Replace `full_path_to` with the actual path to your project directory.
+
 ## 📋 Project Guidelines
 
 ### Development Workflow

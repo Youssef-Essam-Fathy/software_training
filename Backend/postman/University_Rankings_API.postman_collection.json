@@ -1,0 +1,632 @@
+{
+	"info": {
+		"_postman_id": "university-rankings-api",
+		"name": "University Rankings API",
+		"description": "Comprehensive API collection for the University Rankings system with full documentation and automated tests.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "university-rankings-api"
+	},
+	"item": [
+		{
+			"name": "Get All Universities",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api"
+					]
+				},
+				"description": "Retrieve all universities without any filtering or pagination. This endpoint returns the complete list of universities in the database."
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test response status",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test response time",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"// Test response format",
+							"pm.test(\"Response is an array\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response).to.be.an('array');",
+							"});",
+							"",
+							"// Test university structure",
+							"pm.test(\"Universities have required fields\", function () {",
+							"    const response = pm.response.json();",
+							"    if (response.length > 0) {",
+							"        const university = response[0];",
+							"        pm.expect(university).to.have.property('Name');",
+							"        pm.expect(university).to.have.property('Country');",
+							"        pm.expect(university).to.have.property('Region');",
+							"        pm.expect(university).to.have.property('Overall SCORE');",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Rankings",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/rankings",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"rankings"
+					]
+				},
+				"description": "Retrieve university rankings with optional filtering and pagination. This is the main endpoint for the rankings system."
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test response status",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test response time",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"// Test response structure",
+							"pm.test(\"Response has correct structure\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response).to.have.property('data');",
+							"    pm.expect(response).to.have.property('pagination');",
+							"    pm.expect(response).to.have.property('filters');",
+							"});",
+							"",
+							"// Test pagination structure",
+							"pm.test(\"Pagination has required fields\", function () {",
+							"    const response = pm.response.json();",
+							"    const pagination = response.pagination;",
+							"    pm.expect(pagination).to.have.property('currentPage');",
+							"    pm.expect(pagination).to.have.property('totalPages');",
+							"    pm.expect(pagination).to.have.property('totalItems');",
+							"    pm.expect(pagination).to.have.property('itemsPerPage');",
+							"    pm.expect(pagination).to.have.property('hasNextPage');",
+							"    pm.expect(pagination).to.have.property('hasPrevPage');",
+							"});",
+							"",
+							"// Test filters structure",
+							"pm.test(\"Filters have correct structure\", function () {",
+							"    const response = pm.response.json();",
+							"    const filters = response.filters;",
+							"    pm.expect(filters).to.have.property('year');",
+							"    pm.expect(filters).to.have.property('region');",
+							"});",
+							"",
+							"// Test data is array",
+							"pm.test(\"Data is an array\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.data).to.be.an('array');",
+							"});",
+							"",
+							"// Test pagination logic",
+							"pm.test(\"Pagination logic is correct\", function () {",
+							"    const response = pm.response.json();",
+							"    const pagination = response.pagination;",
+							"    ",
+							"    pm.expect(pagination.currentPage).to.be.at.least(1);",
+							"    pm.expect(pagination.totalPages).to.be.at.least(0);",
+							"    pm.expect(pagination.itemsPerPage).to.be.at.least(1);",
+							"    pm.expect(pagination.totalItems).to.be.at.least(0);",
+							"    ",
+							"    // Test hasNextPage logic",
+							"    if (pagination.currentPage < pagination.totalPages) {",
+							"        pm.expect(pagination.hasNextPage).to.be.true;",
+							"    } else {",
+							"        pm.expect(pagination.hasNextPage).to.be.false;",
+							"    }",
+							"    ",
+							"    // Test hasPrevPage logic",
+							"    if (pagination.currentPage > 1) {",
+							"        pm.expect(pagination.hasPrevPage).to.be.true;",
+							"    } else {",
+							"        pm.expect(pagination.hasPrevPage).to.be.false;",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Rankings - Year Filter",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/rankings?year=2025",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"rankings"
+					],
+					"query": [
+						{
+							"key": "year",
+							"value": "2025",
+							"description": "Filter universities by 2025 ranking"
+						}
+					]
+				},
+				"description": "Retrieve universities filtered by 2025 ranking. This endpoint will return universities that have a valid 2025 ranking."
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test response status",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test year filter is applied",
+							"pm.test(\"Year filter is correctly applied\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.filters.year).to.equal('2025');",
+							"});",
+							"",
+							"// Test universities have 2025 ranking",
+							"pm.test(\"Universities have 2025 ranking\", function () {",
+							"    const response = pm.response.json();",
+							"    response.data.forEach(university => {",
+							"        pm.expect(university).to.have.property('2025 Rank');",
+							"        pm.expect(university['2025 Rank']).to.not.be.null;",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Rankings - Region Filter",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/rankings?region=Middle East",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"rankings"
+					],
+					"query": [
+						{
+							"key": "region",
+							"value": "Middle East",
+							"description": "Filter universities by region (case-insensitive)"
+						}
+					]
+				},
+				"description": "Retrieve universities filtered by region. The search is case-insensitive and supports partial matching."
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test response status",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test region filter is applied",
+							"pm.test(\"Region filter is correctly applied\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.filters.region).to.equal('Middle East');",
+							"});",
+							"",
+							"// Test universities are from specified region",
+							"pm.test(\"Universities are from Middle East region\", function () {",
+							"    const response = pm.response.json();",
+							"    response.data.forEach(university => {",
+							"        pm.expect(university.Region.toLowerCase()).to.include('middle east');",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Rankings - Combined Filters",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/rankings?year=2026&region=Asia&page=1&limit=5",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"rankings"
+					],
+					"query": [
+						{
+							"key": "year",
+							"value": "2026",
+							"description": "Filter by 2026 ranking"
+						},
+						{
+							"key": "region",
+							"value": "Asia",
+							"description": "Filter by region"
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"description": "Page number for pagination"
+						},
+						{
+							"key": "limit",
+							"value": "5",
+							"description": "Number of items per page"
+						}
+					]
+				},
+				"description": "Retrieve universities with combined filters: 2026 ranking, Asia region, with pagination (page 1, 5 items per page)."
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test response status",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test all filters are applied",
+							"pm.test(\"All filters are correctly applied\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.filters.year).to.equal('2026');",
+							"    pm.expect(response.filters.region).to.equal('Asia');",
+							"});",
+							"",
+							"// Test pagination is correct",
+							"pm.test(\"Pagination is correctly applied\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.pagination.currentPage).to.equal(1);",
+							"    pm.expect(response.pagination.itemsPerPage).to.equal(5);",
+							"});",
+							"",
+							"// Test data length is within limit",
+							"pm.test(\"Data length is within limit\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.data.length).to.be.at.most(5);",
+							"});",
+							"",
+							"// Test universities match both filters",
+							"pm.test(\"Universities match both filters\", function () {",
+							"    const response = pm.response.json();",
+							"    response.data.forEach(university => {",
+							"        pm.expect(university).to.have.property('2026 Rank');",
+							"        pm.expect(university['2026 Rank']).to.not.be.null;",
+							"        pm.expect(university.Region.toLowerCase()).to.include('asia');",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Rankings - Pagination",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/rankings?page=2&limit=10",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"rankings"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "2",
+							"description": "Page number (starts from 1)"
+						},
+						{
+							"key": "limit",
+							"value": "10",
+							"description": "Number of items per page (default: 10, max: 100)"
+						}
+					]
+				},
+				"description": "Retrieve the second page of universities with 10 items per page. This demonstrates pagination functionality."
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test response status",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test pagination parameters",
+							"pm.test(\"Pagination parameters are correct\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.pagination.currentPage).to.equal(2);",
+							"    pm.expect(response.pagination.itemsPerPage).to.equal(10);",
+							"});",
+							"",
+							"// Test hasPrevPage is true for page 2",
+							"pm.test(\"hasPrevPage is true for page 2\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.pagination.hasPrevPage).to.be.true;",
+							"});",
+							"",
+							"// Test data length is within limit",
+							"pm.test(\"Data length is within limit\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.data.length).to.be.at.most(10);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Rankings - Empty Result",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/rankings?region=NonExistentRegion",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"rankings"
+					],
+					"query": [
+						{
+							"key": "region",
+							"value": "NonExistentRegion",
+							"description": "Region that doesn't exist in the database"
+						}
+					]
+				},
+				"description": "Test the API response when no universities match the filter criteria. This should return an empty data array with proper pagination metadata."
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test response status",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test empty data array",
+							"pm.test(\"Data array is empty\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.data).to.be.an('array').that.is.empty;",
+							"});",
+							"",
+							"// Test pagination for empty result",
+							"pm.test(\"Pagination is correct for empty result\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.pagination.totalItems).to.equal(0);",
+							"    pm.expect(response.pagination.totalPages).to.equal(0);",
+							"    pm.expect(response.pagination.hasNextPage).to.be.false;",
+							"    pm.expect(response.pagination.hasPrevPage).to.be.false;",
+							"});",
+							"",
+							"// Test filter is applied",
+							"pm.test(\"Filter is correctly applied\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response.filters.region).to.equal('NonExistentRegion');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Rankings - Invalid Parameters",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/rankings?page=abc&limit=xyz",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"rankings"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "abc",
+							"description": "Invalid page number (string instead of number)"
+						},
+						{
+							"key": "limit",
+							"value": "xyz",
+							"description": "Invalid limit (string instead of number)"
+						}
+					]
+				},
+				"description": "Test the API behavior with invalid pagination parameters. The API should handle this gracefully and return a valid response."
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test response status (should still be 200)",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test response structure is maintained",
+							"pm.test(\"Response structure is maintained\", function () {",
+							"    const response = pm.response.json();",
+							"    pm.expect(response).to.have.property('data');",
+							"    pm.expect(response).to.have.property('pagination');",
+							"    pm.expect(response).to.have.property('filters');",
+							"});",
+							"",
+							"// Test that invalid parameters are handled gracefully",
+							"pm.test(\"Invalid parameters are handled gracefully\", function () {",
+							"    const response = pm.response.json();",
+							"    // The API should still return a valid response even with invalid parameters",
+							"    pm.expect(response.data).to.be.an('array');",
+							"    pm.expect(response.pagination).to.be.an('object');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Set default headers",
+					"pm.request.headers.add({",
+					"    key: 'Accept',",
+					"    value: 'application/json'",
+					"});",
+					"",
+					"// Log request details",
+					"console.log('Request:', pm.request.method, pm.request.url);",
+					"console.log('Headers:', pm.request.headers);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global test setup",
+					"console.log('Response Status:', pm.response.status);",
+					"console.log('Response Time:', pm.response.responseTime + 'ms');",
+					"",
+					"// Test response headers",
+					"pm.test(\"Response has JSON content type\", function () {",
+					"    pm.response.to.have.header('Content-Type');",
+					"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+					"});",
+					"",
+					"// Test response is valid JSON",
+					"pm.test(\"Response is valid JSON\", function () {",
+					"    pm.response.to.be.json;",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL for the API server"
+		}
+	]
+}

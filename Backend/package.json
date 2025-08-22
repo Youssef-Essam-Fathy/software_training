@@ -4,7 +4,9 @@
     "description": "This web app rank the univirsities in Egypt",
     "main": "app.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "test:coverage": "jest --coverage",
         "start": "node src/app.js",
         "dev": "nodemon src/app.js",
         "lint": "eslint .",
@@ -20,11 +22,14 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.32.0",
+        "@types/jest": "^30.0.0",
         "eslint": "^9.32.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-prettier": "^5.5.4",
         "globals": "^16.3.0",
+        "jest": "^30.0.5",
         "nodemon": "^3.1.10",
-        "prettier": "^3.6.2"
+        "prettier": "^3.6.2",
+        "supertest": "^7.1.4"
     }
 }

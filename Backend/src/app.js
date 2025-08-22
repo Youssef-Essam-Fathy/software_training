@@ -4,6 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 const connectDB = require('./config/db');
 const University = require('./models/university.model');
+const rankingRoutes = require('./routes/rankingRoutes');
 
 connectDB();
 
@@ -15,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+app.use('/api', rankingRoutes);
+
 app.get('/api', async (req, res) => {
     try {
         const universities = await University.find({});
